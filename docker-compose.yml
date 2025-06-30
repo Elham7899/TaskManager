@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  api:
+    image: taskmanager-api
+    build:
+      context: .
+      dockerfile: TaskManager.API/Dockerfile
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgres
+    networks:
+      - tasknet
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: TaskDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - tasknet
+
+volumes:
+  postgres-data:
+
+networks:
+  tasknet:
