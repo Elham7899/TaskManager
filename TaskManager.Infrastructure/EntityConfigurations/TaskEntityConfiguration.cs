@@ -10,6 +10,9 @@ public class TaskEntityConfiguration : IEntityTypeConfiguration<TaskItem>
 {
     public void Configure(EntityTypeBuilder<TaskItem> builder)
     {
+        //Name And Scheme
+        builder.ToTable(nameof(TaskItem));
+
         //Props
         builder.Property(x => x.Title).IsRequired().HasMaxLength(200);
 
@@ -17,5 +20,6 @@ public class TaskEntityConfiguration : IEntityTypeConfiguration<TaskItem>
         builder.HasKey(x=>x.Id);
 
         //Navigation
+        builder.HasMany(x=>x.Labels).WithMany(x=>x.Tasks).UsingEntity(x=>x.ToTable("TaskLables"));
     }
 }

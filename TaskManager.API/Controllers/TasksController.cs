@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TaskManager.Application.Interfaces;
 using TaskManager.Domain.Entities;
 
@@ -15,7 +14,6 @@ public class TasksController : ControllerBase
         _taskService = taskService;
     }
 
-    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
