@@ -6,7 +6,7 @@ using TaskManager.Infrastructure.DBContext;
 
 namespace TaskManager.Infrastructure.Services;
 
-public class LaberService(ApplicationDbContext context) : ILabelService
+public class LabelService(ApplicationDbContext context) : ILabelService
 {
     public async Task AssignLabelsToTaskAsync(int taskId, List<int> labelIds)
     {
@@ -48,7 +48,7 @@ public class LaberService(ApplicationDbContext context) : ILabelService
     public async Task RemoveLabelsFromTaskAsync(int taskId, int labelId)
     {
         var task = await context.Tasks.FirstOrDefaultAsync(x => x.Id == taskId);
-        if (task != null)
+        if (task == null)
             throw new Exception("Task not found");
 
         var label = await context.Labels.Where(x => x.Id == labelId).FirstOrDefaultAsync();

@@ -3,7 +3,7 @@ using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.DBContext;
 using TaskManager.Infrastructure.Services;
 
-namespace TaskManager.Tests;
+namespace TaskManager.Tests.Services;
 
 public class TaskServiceTests
 {
