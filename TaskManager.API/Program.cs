@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using TaskManager.API.Middlewares;
 using TaskManager.Application.Interfaces;
+using TaskManager.Application.Mapping;
 using TaskManager.Infrastructure.DBContext;
 using TaskManager.Infrastructure.Services;
 
@@ -70,7 +73,11 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddAutoMapper(x => x.AddProfile<MappingProfile>());
+
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

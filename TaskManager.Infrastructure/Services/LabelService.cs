@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaskManager.Application.DTOs;
+using TaskManager.Application.DTOs.Label;
 using TaskManager.Application.Interfaces;
 using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.DBContext;
@@ -47,7 +47,7 @@ public class LabelService(ApplicationDbContext context) : ILabelService
 
     public async Task RemoveLabelsFromTaskAsync(int taskId, int labelId)
     {
-        var task = await context.Tasks.FirstOrDefaultAsync(x => x.Id == taskId);
+        var task = await context.Tasks.Include(x => x.Labels).FirstOrDefaultAsync(x => x.Id == taskId);
         if (task == null)
             throw new Exception("Task not found");
 
