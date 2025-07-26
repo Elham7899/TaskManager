@@ -1,4 +1,4 @@
-﻿using TaskManager.Application.DTOs;
+﻿using TaskManager.Application.DTOs.Label;
 using TaskManager.Domain.Entities;
 
 namespace TaskManager.Application.Interfaces;
