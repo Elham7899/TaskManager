@@ -20,9 +20,9 @@ public class TasksController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(bool isComplete, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var tasks = await _taskService.GetAllTasksAsync();
+        var tasks = await _taskService.GetAllTasksAsync(isComplete, page, pageSize);
         return Ok(tasks);
     }
 

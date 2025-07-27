@@ -5,7 +5,7 @@ namespace TaskManager.Application.DTOs.Task;
 public class CreateTaskDto
 {
     [Required]
-    [MaxLength(200)]
+    [MaxLength(100)]
     public string Title { get; set; } = string.Empty;
 
     public bool IsCompleted { get; set; } = false;
