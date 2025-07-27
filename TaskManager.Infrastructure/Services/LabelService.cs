@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using TaskManager.Application.DTOs.Label;
 using TaskManager.Application.Interfaces;
 using TaskManager.Domain.Entities;
@@ -6,7 +8,7 @@ using TaskManager.Infrastructure.DBContext;
 
 namespace TaskManager.Infrastructure.Services;
 
-public class LabelService(ApplicationDbContext context) : ILabelService
+public class LabelService(ApplicationDbContext context, IMapper mapper) : ILabelService
 {
     public async Task AssignLabelsToTaskAsync(int taskId, List<int> labelIds)
     {
@@ -35,14 +37,21 @@ public class LabelService(ApplicationDbContext context) : ILabelService
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<Label>> GetAllLabelsAsync()
+    public async Task<List<LabelDto>> GetAllLabelsAsync(int page = 1, int pagesize = 10)
     {
-        return await context.Labels.ToListAsync();
+        return await context.Labels
+            .Skip((page - 1) * pagesize)
+            .Take(pagesize)
+            .ProjectTo<LabelDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
     }
 
-    public async Task<Label> GetById(int id)
+    public async Task<LabelDto> GetById(int id)
     {
-        return await context.Labels.Where(x => x.Id == id).SingleOrDefaultAsync();
+        return await context.Labels
+            .Where(x => x.Id == id)
+            .ProjectTo<LabelDto>(mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync();
     }
 
     public async Task RemoveLabelsFromTaskAsync(int taskId, int labelId)

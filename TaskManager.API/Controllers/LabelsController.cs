@@ -23,9 +23,9 @@ public class LabelsController(ILabelService labelService, IMapper mapper) : Cont
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get( [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var labels = await _labelService.GetAllLabelsAsync();
+        var labels = await _labelService.GetAllLabelsAsync( page, pageSize);
         var dtos = _mapper.Map<List<LabelDto>>(labels);
         return Ok(dtos);
     }

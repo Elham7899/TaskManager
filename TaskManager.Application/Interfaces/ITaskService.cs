@@ -1,10 +1,11 @@
-﻿using TaskManager.Domain.Entities;
+﻿using TaskManager.Application.DTOs.Task;
+using TaskManager.Domain.Entities;
 
 namespace TaskManager.Application.Interfaces;
 
 public interface ITaskService
 {
     Task<TaskItem> AddTaskAsync(TaskItem task, List<int>? labelIds = null);
-    Task<TaskItem?> GetTaskByIdAsync(int id);
-    Task<List<TaskItem>> GetAllTasksAsync();
+    Task<TaskDto?> GetTaskByIdAsync(int id);
+    Task<List<TaskDto>> GetAllTasksAsync(bool isComplete, int page, int pagesize);
 }

@@ -1,11 +1,15 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using TaskManager.API.Middlewares;
+using TaskManager.Application.DTOs.Task;
 using TaskManager.Application.Interfaces;
 using TaskManager.Application.Mapping;
+using TaskManager.Application.Validators.Task;
 using TaskManager.Infrastructure.DBContext;
 using TaskManager.Infrastructure.Services;
 
@@ -54,6 +58,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILabelService, LabelService>();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateTaskDtoValidator>();
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
