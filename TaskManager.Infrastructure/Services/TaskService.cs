@@ -35,7 +35,7 @@ public class TaskService : ITaskService
         return task;
     }
 
-    public async Task<List<TaskDto>> GetAllTasksAsync(bool isComplete, int page = 1, int pageSize = 10)
+    public async Task<List<TaskDto>> GetAllTasksAsync(bool isComplete = false, int page = 1, int pageSize = 10)
     {
         var query = _context.Tasks.Include(x => x.Labels).AsQueryable();
 

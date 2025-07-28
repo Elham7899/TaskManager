@@ -7,30 +7,49 @@ using TaskManager.Application.Interfaces;
 
 namespace TaskManager.API.Controllers;
 
+/// <summary>
+/// کنترلر تگ ها
+/// </summary>
+/// <param name="labelService"></param>
+/// <param name="mapper"></param>
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class LabelsController(ILabelService labelService, IMapper mapper) : ControllerBase
 {
-    private readonly ILabelService _labelService = labelService;
-    private readonly IMapper _mapper = mapper;
-
+    /// <summary>
+    /// Create Label
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> Create(CreateLabelDto input)
     {
-        var label = await _labelService.CreateLabelAsync(input);
-        var dto = _mapper.Map<LabelDto>(label);
+        var label = await labelService.CreateLabelAsync(input);
+        var dto = mapper.Map<LabelDto>(label);
         return Ok(dto);
     }
 
+    /// <summary>
+    /// Gets all Labels.
+    /// </summary>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
     [HttpGet]
-    public async Task<IActionResult> Get( [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var labels = await _labelService.GetAllLabelsAsync( page, pageSize);
-        var dtos = _mapper.Map<List<LabelDto>>(labels);
+        var labels = await labelService.GetAllLabelsAsync(page, pageSize);
+        var dtos = mapper.Map<List<LabelDto>>(labels);
         return Ok(dtos);
     }
 
-    [Authorize]
+    /// <summary>
+    /// Assign Label To Task
+    /// </summary>
+    /// <param name="taskId"></param>
+    /// <param name="input"></param>
+    /// <returns></returns>
     [HttpPost("{taskId}/assign")]
     public async Task<IActionResult> AssignLabelToTask(int taskId, [FromBody] AssignLabelsDto input)
     {
@@ -38,7 +57,12 @@ public class LabelsController(ILabelService labelService, IMapper mapper) : Cont
         return Ok();
     }
 
-    [Authorize]
+    /// <summary>
+    /// Remove Label From Task
+    /// </summary>
+    /// <param name="taskId"></param>
+    /// <param name="labelId"></param>
+    /// <returns></returns>
     [HttpDelete("{taskId}/remove/{labelId}")]
     public async Task<IActionResult> RemoveLabelFromTask(int taskId, int labelId)
     {
@@ -46,16 +70,25 @@ public class LabelsController(ILabelService labelService, IMapper mapper) : Cont
         return Ok();
     }
 
-    [Authorize]
+    /// <summary>
+    /// Edit Label
+    /// </summary>
+    /// <param name="labelId"></param>
+    /// <param name="newName"></param>
+    /// <returns></returns>
     [HttpPut("{labelId}")]
     public async Task<IActionResult> UpdateLabel(int labelId, [FromBody] string newName)
     {
-        var updatedLabel = await _labelService.UpdateLabelAsync(labelId, newName);
-        var dto = _mapper.Map<LabelDto>(updatedLabel);
+        var updatedLabel = await labelService.UpdateLabelAsync(labelId, newName);
+        var dto = mapper.Map<LabelDto>(updatedLabel);
         return Ok(dto);
     }
 
-    [Authorize]
+    /// <summary>
+    /// Delete Label
+    /// </summary>
+    /// <param name="labelId"></param>
+    /// <returns></returns>
     [HttpDelete("{labelId}")]
     public async Task<IActionResult> DeleteLabel(int labelId)
     {

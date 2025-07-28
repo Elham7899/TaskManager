@@ -1,37 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaskManager.API.DTOs;
+using TaskManager.Application.DTOs.Login;
 using TaskManager.Application.Interfaces;
-using TaskManager.Domain.Entities;
-using TaskManager.Infrastructure.DBContext;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController(IAuthService authService) : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IAuthService _authService;
-
-    public AuthController(ApplicationDbContext context, IAuthService authService)
-    {
-        _context = context;
-        _authService = authService;
-    }
-
+    /// <summary>
+    /// Login an existing user
+    /// </summary>
     [HttpPost("login")]
-    public IActionResult Login([FromBody] User login)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Username == login.Username && u.Password == login.Password);
-        if (user == null)
-            return Unauthorized();
-
-        var token = _authService.GenerateJwtToken(user);
+        var token = await authService.LoginAsync(dto);
         return Ok(new { token });
     }
 
+    /// <summary>
+    /// Register a new user
+    /// </summary>
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] User newUser)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
-        _context.Users.Add(newUser);
-        await _context.SaveChangesAsync();
-        return Ok(new { message = "User created" });
+        var token = await authService.RegisterAsync(dto);
+        return Ok(new { token });
     }
 }

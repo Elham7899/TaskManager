@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.Application.DTOs.Task;
 using TaskManager.Application.Interfaces;
@@ -7,40 +8,48 @@ using TaskManager.Domain.Entities;
 namespace TaskManager.API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
-public class TasksController : ControllerBase
+public class TasksController(ITaskService taskService, IMapper mapper) : ControllerBase
 {
-    private readonly ITaskService _taskService;
-    private readonly IMapper _mapper;
-
-    public TasksController(ITaskService taskService, IMapper mapper)
-    {
-        _taskService = taskService;
-        _mapper = mapper;
-    }
-
+    /// <summary>
+    /// Gets all tasks with optional title filtering.
+    /// </summary>
+    /// <param name="title">Filter by title</param>
+    /// <param name="page">Page number</param>
+    /// <param name="pageSize">Page size</param>
+    /// <returns>List of tasks</returns>
     [HttpGet]
     public async Task<IActionResult> GetAll(bool isComplete, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var tasks = await _taskService.GetAllTasksAsync(isComplete, page, pageSize);
+        var tasks = await taskService.GetAllTasksAsync(isComplete, page, pageSize);
         return Ok(tasks);
     }
 
+    /// <summary>
+    /// Create task with optional title.
+    /// </summary>
+    /// <returns>List of tasks</returns>
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateTaskDto input)
     {
-        var task = _mapper.Map<TaskItem>(input);
-        var result = await _taskService.AddTaskAsync(task, input.LabelIds);
-        return CreatedAtAction(nameof(GetTaskById), new { id = task.Id }, _mapper.Map<TaskDto>(task));
+        var task = mapper.Map<TaskItem>(input);
+        var result = await taskService.AddTaskAsync(task, input.LabelIds);
+        return CreatedAtAction(nameof(GetTaskById), new { id = task.Id }, mapper.Map<TaskDto>(task));
     }
 
+    /// <summary>
+    /// Gets task by Id.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetTaskById(int id)
     {
-        var task = await _taskService.GetTaskByIdAsync(id);
+        var task = await taskService.GetTaskByIdAsync(id);
         if (task == null)
             return NotFound();
 
-        return Ok(_mapper.Map<TaskDto>(task));
+        return Ok(mapper.Map<TaskDto>(task));
     }
 }
