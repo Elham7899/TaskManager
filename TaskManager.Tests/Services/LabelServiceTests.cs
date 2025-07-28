@@ -1,5 +1,8 @@
-﻿using FluentAssertions;
+﻿using AutoMapper;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using TaskManager.Application.DTOs.Label;
+using TaskManager.Application.Mapping;
 using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.DBContext;
 using TaskManager.Infrastructure.Services;
@@ -18,7 +21,15 @@ public class LabelServiceTests
             .Options;
 
         _context = new ApplicationDbContext(option);
-        _service = new LabelService(_context);
+
+        // AutoMapper configuration
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
+        var mapper = config.CreateMapper();
+
+        _service = new LabelService(_context, mapper);
     }
 
     [Fact]
@@ -28,7 +39,7 @@ public class LabelServiceTests
         var label = new Label { Name = "Test" };
 
         //Act
-        var result = await _service.CreateLabelAsync(new Application.DTOs.CreateLabelDto { Name = label.Name });
+        var result = await _service.CreateLabelAsync(new CreateLabelDto { Name = label.Name });
         var labelInDb = await _context.Labels.FirstOrDefaultAsync(x => x.Name == "Test");
 
         //Assert
