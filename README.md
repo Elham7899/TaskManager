@@ -7,38 +7,44 @@
 
 > Production-ready task management API with enterprise security, containerization, and clean architecture implementation
 
-![Architecture Diagram](https://via.placeholder.com/800x400.png?text=Clean+Architecture+Diagram)
-*(Pro Tip: Add architecture diagram with [draw.io](https://app.diagrams.net/))*
-
 ## 🌟 Core Features
 
 ### 🔒 Security & Authentication
-- JWT Bearer Authentication with refresh tokens
-- Role-based Authorization (RBAC)
-- Password hashing with PBKDF2
-- Token revocation mechanism
+- Secure **JWT Authentication**
+- User registration & login
+- Token-based protected endpoints
+- Passwords hashed with **BCrypt**
+- Centralized exception middleware
 
 ### 📦 Domain-Centric Architecture
-| Layer          | Responsibilities                          |
-|----------------|-------------------------------------------|
-| **Domain**     | Entities, Enums, Interfaces, Exceptions   |
-| **Application**| CQRS Handlers, DTOs, Validators, Services |
-| **Infrastructure**| EF Core, PostgreSQL, Identity, Caching  |
-| **API**        | Controllers, Middleware, Swagger config   |
+| Layer          | Responsibilities                             |
+|----------------|----------------------------------------------|
+| **Domain**     | Entities, Enums                              |
+| **Application**|Services, DTOs, Validators, Mapping ,Interface|
+| **Infrastructure**| EF Core, PostgreSQL, Identity, Caching    |
+| **API**        | Controllers, Middleware, Swagger config, Auth|
 
 ### ⚙️ Operational Excellence
-- Dockerized PostgreSQL with persistent volume
-- Health Check endpoints (`/health`)
-- Request/Response logging with Serilog
-- Automated database migrations on startup
-- Swagger UI with JWT support
+- ✅ **Global Error Handling** via `ExceptionMiddleware`
+- ✅ **Pagination + Filtering** support on task endpoints
+- ✅ **Swagger UI** with JWT support and summaries
+- ✅ **Dockerized PostgreSQL**
+- ✅ Automated **database migration** at startup
 
 ## 📚 API Endpoints
-Method	Endpoint	Description	Auth Required
-POST	/api/auth/login	Get JWT token	❌
-POST	/api/tasks	Create new task	✅
-GET	/api/tasks?status=InProgress	Filter tasks	✅
-PUT	/api/tasks/{id}	Update task	✅
+| Method | Endpoint                    | Description                | Auth Required |
+|--------|-----------------------------|----------------------------|---------------|
+| POST   | `/api/auth/register`        | Register new user          | ❌            |
+| POST   | `/api/auth/login`           | Authenticate & get token   | ❌            |
+| GET    | `/api/tasks`                | List tasks (with filters)  | ✅            |
+| POST   | `/api/tasks`                | Create a task              | ✅            |
+| PUT    | `/api/tasks/{id}`           | Update a task              | ✅            |
+
+
+## 🧭 Example filtered endpoint:
+http
+GET /api/tasks?isComplete=false&page=1&pageSize=10
+Authorization: Bearer <token>
 
 ## 🧪 Testing Strategy
 graph TD
@@ -55,13 +61,15 @@ Run tests with:
 Configure via appsettings.Development.json:
 {
   "Jwt": {
-    "Secret": "your-256-bit-secret",
-    "ExpiryHours": 72
+    "Key": "your-secret-key",
+    "Issuer": "TaskManagerAPI",
+    "Audience": "TaskManagerClient"
   },
   "ConnectionStrings": {
-    "Postgres": "Host=localhost;Database=taskdb;Username=postgres;Password=mysecretpassword"
+    "DefaultConnection": "Host=localhost;Database=taskdb;Username=postgres;Password=mysecret"
   }
 }
+
 
 ## 🛠 Future Roadmap
 Add Redis caching layer
@@ -87,6 +95,7 @@ git push origin feature/auth-enhancements
 
 ## 📜 License
 MIT License - See LICENSE for details
+Created with 💻 by Elham Ghorbanzade
 
 ## 🚀 Getting Started
 
