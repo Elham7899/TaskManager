@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,13 +12,13 @@ using TaskManager.Infrastructure.DBContext;
 
 namespace TaskManager.Infrastructure.Services;
 
-public class AuthService(IConfiguration config, ApplicationDbContext _context) : IAuthService
+public class AuthService(IConfiguration config, ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) : IAuthService
 {
-    public string GenerateJwtToken(User user)
+    public string GenerateJwtToken(ApplicationUser user)
     {
         var claims = new[]
         {
-        new Claim(ClaimTypes.Name, user.Username),
+        new Claim(ClaimTypes.Name, user.UserName),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
         var keyBytes = Encoding.UTF8.GetBytes(config["Jwt:Key"]!);
@@ -41,27 +41,48 @@ public class AuthService(IConfiguration config, ApplicationDbContext _context) :
 
     public async Task<string> LoginAsync(LoginDto dto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == dto.Username);
-        if ((user is null) || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
-            throw new Exception("Invalid username or password");
+        var user = await userManager.FindByNameAsync(dto.UserName);
+        if (user == null || !(await userManager.CheckPasswordAsync(user, dto.Password)))
+            throw new Exception("Invalid login");
 
-        return GenerateJwtToken(user);
+        var roles = await userManager.GetRolesAsync(user);
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Name, user.UserName!)
+        };
+
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(1),
+            signingCredentials: creds);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     public async Task<string> RegisterAsync(RegisterDto dto)
     {
-        if (_context.Users.Any(u => u.Username == dto.Username))
-            throw new Exception("Username already exists");
-
-        var user = new User
+        var user = new ApplicationUser
         {
-            Username = dto.Username,
-            Password = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+            UserName = dto.UserName,
+            Email = dto.Email
         };
+        var result = await userManager.CreateAsync(user, dto.Password);
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        if (!result.Succeeded)
+            throw new Exception(string.Join("; ", result.Errors.Select(e => e.Description)));
 
-        return GenerateJwtToken(user);
+        await userManager.AddToRoleAsync(user, "User");
+
+        return await LoginAsync(new LoginDto { UserName = dto.UserName, Password = dto.Password });
     }
 }
