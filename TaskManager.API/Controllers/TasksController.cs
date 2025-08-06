@@ -20,6 +20,7 @@ public class TasksController(ITaskService taskService, IMapper mapper) : Control
     /// <param name="pageSize">Page size</param>
     /// <returns>List of tasks</returns>
     [HttpGet]
+    [Authorize(Roles = "User")]
     public async Task<IActionResult> GetAll(bool isComplete, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var tasks = await taskService.GetAllTasksAsync(isComplete, page, pageSize);
@@ -31,6 +32,7 @@ public class TasksController(ITaskService taskService, IMapper mapper) : Control
     /// </summary>
     /// <returns>List of tasks</returns>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateTaskDto input)
     {
         var task = mapper.Map<TaskItem>(input);
@@ -44,6 +46,7 @@ public class TasksController(ITaskService taskService, IMapper mapper) : Control
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
+    [Authorize(Roles = "User")]
     public async Task<IActionResult> GetTaskById(int id)
     {
         var task = await taskService.GetTaskByIdAsync(id);

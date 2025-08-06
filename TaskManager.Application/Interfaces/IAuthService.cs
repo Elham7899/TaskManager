@@ -6,7 +6,7 @@ namespace TaskManager.Application.Interfaces;
 
 public interface IAuthService
 {
-    string GenerateJwtToken(User user);
+    string GenerateJwtToken(ApplicationUser user);
     Task<string> RegisterAsync(RegisterDto dto);
     Task<string> LoginAsync(LoginDto dto);
 }

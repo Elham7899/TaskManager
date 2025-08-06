@@ -5,7 +5,7 @@ using TaskManager.Application.Interfaces;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IAuthService authService) : ControllerBase
+public class AuthController(IAuthService authService, IRoleService roleService) : ControllerBase
 {
     /// <summary>
     /// Login an existing user
@@ -29,5 +29,22 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         var token = await authService.RegisterAsync(dto);
         return Ok(new { token });
+    }
+
+    [HttpPost("assign")]
+    public async Task<IActionResult> AssignRole([FromBody] AssignRoleRequestDto request)
+    {
+        try
+        {
+            var result = await roleService.AssignRoleToUserAsync(request.UserId, request.Role);
+            if (result)
+                return Ok(new { message = "Role assigned successfully" });
+
+            return BadRequest("Failed to assign role");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
     }
 }

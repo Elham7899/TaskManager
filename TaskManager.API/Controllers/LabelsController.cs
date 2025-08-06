@@ -13,7 +13,7 @@ namespace TaskManager.API.Controllers;
 /// <param name="labelService"></param>
 /// <param name="mapper"></param>
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "User")]
 [ApiController]
 public class LabelsController(ILabelService labelService, IMapper mapper) : ControllerBase
 {
