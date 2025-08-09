@@ -2,97 +2,82 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.API.DTOs;
+using TaskManager.API.Responses;
 using TaskManager.Application.DTOs.Label;
 using TaskManager.Application.Interfaces;
 
 namespace TaskManager.API.Controllers;
 
 /// <summary>
-/// کنترلر تگ ها
+/// Manages task labels (create, list, update, delete, assign to tasks)
 /// </summary>
-/// <param name="labelService"></param>
-/// <param name="mapper"></param>
 [Route("api/[controller]")]
 [Authorize(Roles = "User")]
 [ApiController]
 public class LabelsController(ILabelService labelService, IMapper mapper) : ControllerBase
 {
     /// <summary>
-    /// Create Label
+    /// Create a new label.
     /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
     [HttpPost]
-    public async Task<IActionResult> Create(CreateLabelDto input)
+    [ProducesResponseType(typeof(ApiResponse<LabelDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<LabelDto>>> Create([FromBody] CreateLabelDto input)
     {
         var label = await labelService.CreateLabelAsync(input);
         var dto = mapper.Map<LabelDto>(label);
-        return Ok(dto);
+        return Ok(ApiResponse<LabelDto>.ReturnSuccess(dto));
     }
 
     /// <summary>
-    /// Gets all Labels.
+    /// Get all labels with pagination.
     /// </summary>
-    /// <param name="page"></param>
-    /// <param name="pageSize"></param>
-    /// <returns></returns>
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    [ProducesResponseType(typeof(ApiResponse<List<LabelDto>>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<List<LabelDto>>>> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var labels = await labelService.GetAllLabelsAsync(page, pageSize);
         var dtos = mapper.Map<List<LabelDto>>(labels);
-        return Ok(dtos);
+        return Ok(ApiResponse<IEnumerable<LabelDto>>.ReturnSuccess(dtos, new PaginationMetadata(page, pageSize, dtos.Count)));
     }
 
     /// <summary>
-    /// Assign Label To Task
+    /// Assign labels to a specific task.
     /// </summary>
-    /// <param name="taskId"></param>
-    /// <param name="input"></param>
-    /// <returns></returns>
     [HttpPost("{taskId}/assign")]
-    public async Task<IActionResult> AssignLabelToTask(int taskId, [FromBody] AssignLabelsDto input)
+    public async Task<ActionResult<ApiResponse<string>>> AssignLabelToTask(int taskId, [FromBody] AssignLabelsDto input)
     {
         await labelService.AssignLabelsToTaskAsync(taskId, input.LabelIds);
-        return Ok();
+        return Ok(ApiResponse<string>.ReturnSuccess("Labels assigned successfully."));
     }
 
     /// <summary>
-    /// Remove Label From Task
+    /// Remove a label from a task.
     /// </summary>
-    /// <param name="taskId"></param>
-    /// <param name="labelId"></param>
-    /// <returns></returns>
     [HttpDelete("{taskId}/remove/{labelId}")]
-    public async Task<IActionResult> RemoveLabelFromTask(int taskId, int labelId)
+    public async Task<ActionResult<ApiResponse<string>>> RemoveLabelFromTask(int taskId, int labelId)
     {
         await labelService.RemoveLabelsFromTaskAsync(taskId, labelId);
-        return Ok();
+        return Ok(ApiResponse<string>.ReturnSuccess("Label removed successfully."));
     }
 
     /// <summary>
-    /// Edit Label
+    /// Update a label's name.
     /// </summary>
-    /// <param name="labelId"></param>
-    /// <param name="newName"></param>
-    /// <returns></returns>
     [HttpPut("{labelId}")]
-    public async Task<IActionResult> UpdateLabel(int labelId, [FromBody] string newName)
+    public async Task<ActionResult<ApiResponse<LabelDto>>> UpdateLabel(int labelId, [FromBody] string newName)
     {
         var updatedLabel = await labelService.UpdateLabelAsync(labelId, newName);
         var dto = mapper.Map<LabelDto>(updatedLabel);
-        return Ok(dto);
+        return Ok(ApiResponse<LabelDto>.ReturnSuccess(dto));
     }
 
     /// <summary>
-    /// Delete Label
+    /// Delete a label.
     /// </summary>
-    /// <param name="labelId"></param>
-    /// <returns></returns>
     [HttpDelete("{labelId}")]
-    public async Task<IActionResult> DeleteLabel(int labelId)
+    public async Task<ActionResult<ApiResponse<string>>> DeleteLabel(int labelId)
     {
         await labelService.DeleteLabelAsync(labelId);
-        return Ok();
+        return Ok(ApiResponse<string>.ReturnSuccess("Label deleted successfully."));
     }
 }

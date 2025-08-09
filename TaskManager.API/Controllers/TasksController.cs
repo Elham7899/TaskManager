@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TaskManager.API.Responses;
 using TaskManager.Application.DTOs.Task;
 using TaskManager.Application.Interfaces;
 using TaskManager.Domain.Entities;
@@ -21,10 +22,12 @@ public class TasksController(ITaskService taskService, IMapper mapper) : Control
     /// <returns>List of tasks</returns>
     [HttpGet]
     [Authorize(Roles = "User")]
-    public async Task<IActionResult> GetAll(bool isComplete, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    [ProducesResponseType(typeof(ApiResponse<List<TaskDto>>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<List<TaskDto>>>> GetAll(bool isComplete, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var tasks = await taskService.GetAllTasksAsync(isComplete, page, pageSize);
-        return Ok(tasks);
+        var dtos = mapper.Map<List<TaskDto>>(tasks);
+        return Ok(ApiResponse<List<TaskDto>>.ReturnSuccess(dtos, new PaginationMetadata(page, pageSize, dtos.Count)));
     }
 
     /// <summary>
@@ -33,11 +36,12 @@ public class TasksController(ITaskService taskService, IMapper mapper) : Control
     /// <returns>List of tasks</returns>
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Create([FromBody] CreateTaskDto input)
+    [ProducesResponseType(typeof(ApiResponse<TaskDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<TaskDto>>> Create([FromBody] CreateTaskDto input)
     {
         var task = mapper.Map<TaskItem>(input);
         var result = await taskService.AddTaskAsync(task, input.LabelIds);
-        return CreatedAtAction(nameof(GetTaskById), new { id = task.Id }, mapper.Map<TaskDto>(task));
+        return Ok(ApiResponse<TaskDto>.ReturnSuccess(mapper.Map<TaskDto>(task)));
     }
 
     /// <summary>
@@ -47,12 +51,12 @@ public class TasksController(ITaskService taskService, IMapper mapper) : Control
     /// <returns></returns>
     [HttpGet("{id}")]
     [Authorize(Roles = "User")]
-    public async Task<IActionResult> GetTaskById(int id)
+    public async Task<ActionResult<ApiResponse<TaskDto>>> GetTaskById(int id)
     {
         var task = await taskService.GetTaskByIdAsync(id);
         if (task == null)
             return NotFound();
 
-        return Ok(mapper.Map<TaskDto>(task));
+        return Ok(ApiResponse<TaskDto>.ReturnSuccess(mapper.Map<TaskDto>(task)));
     }
 }
