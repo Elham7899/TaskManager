@@ -1,6 +1,6 @@
 ﻿namespace TaskManager.Domain.Entities;
 
-public class TaskItem
+public class TaskItem : BaseEntity
 {
     //Primery Key
     public int Id { get; set; }
@@ -10,5 +10,5 @@ public class TaskItem
     public bool IsCompleted { get; set; }
 
     //Navigations
-    public List<Label> Labels { get; set; } = new List<Label>();
+    public List<TaskLabel> TaskLabels { get; set; } = new List<TaskLabel>();
 }

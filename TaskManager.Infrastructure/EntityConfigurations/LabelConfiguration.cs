@@ -4,7 +4,7 @@ using TaskManager.Domain.Entities;
 
 namespace TaskManager.Infrastructure.EntityConfigurations;
 
-public class LabelEntityConfiguration : IEntityTypeConfiguration<Label>
+public class LabelConfiguration : IEntityTypeConfiguration<Label>
 {
     public void Configure(EntityTypeBuilder<Label> builder)
     {
@@ -16,5 +16,9 @@ public class LabelEntityConfiguration : IEntityTypeConfiguration<Label>
 
         //Props
         builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
+        builder.Property(x => x.CreatedAt).IsRequired();
+
+        //Navigarions
+        builder.HasMany(x => x.TaskLabels).WithOne(x => x.Label).HasForeignKey(x => x.LabelId);
     }
 }
