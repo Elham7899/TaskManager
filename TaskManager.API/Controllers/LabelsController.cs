@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskManager.API.DTOs;
 using TaskManager.API.Responses;
 using TaskManager.Application.DTOs.Label;
 using TaskManager.Application.Interfaces;

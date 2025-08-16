@@ -6,7 +6,7 @@ using TaskManager.Domain.Entities;
 
 namespace TaskManager.Infrastructure.EntityConfigurations;
 
-public class TaskEntityConfiguration : IEntityTypeConfiguration<TaskItem>
+public class TaskConfiguration : IEntityTypeConfiguration<TaskItem>
 {
     public void Configure(EntityTypeBuilder<TaskItem> builder)
     {
@@ -15,11 +15,12 @@ public class TaskEntityConfiguration : IEntityTypeConfiguration<TaskItem>
 
         //Props
         builder.Property(x => x.Title).IsRequired().HasMaxLength(200);
+        builder.Property(t => t.CreatedAt).IsRequired();
 
         // Identity Key
-        builder.HasKey(x=>x.Id);
+        builder.HasKey(x => x.Id);
 
         //Navigation
-        builder.HasMany(x=>x.Labels).WithMany(x=>x.Tasks).UsingEntity(x=>x.ToTable("TaskLables"));
+        builder.HasMany(x => x.TaskLabels).WithOne(x => x.Task).HasForeignKey(x => x.TaskId);
     }
 }
