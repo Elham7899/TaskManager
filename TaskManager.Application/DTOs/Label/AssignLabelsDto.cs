@@ -1,4 +1,4 @@
-﻿namespace TaskManager.API.DTOs;
+﻿namespace TaskManager.Application.DTOs.Label;
 
 public class AssignLabelsDto
 {

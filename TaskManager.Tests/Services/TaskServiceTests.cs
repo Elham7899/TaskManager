@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using TaskManager.Application.Mapping;
+﻿using Microsoft.EntityFrameworkCore;
 using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.DBContext;
 using TaskManager.Infrastructure.Services;

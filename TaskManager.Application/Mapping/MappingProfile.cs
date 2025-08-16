@@ -10,10 +10,20 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         //TaskItem
-        CreateMap<TaskItem, TaskDto>().
-            ForMember(dest => dest.Labels, opt => opt.MapFrom(src => src.Labels.Select(l => l.Name)));
-        CreateMap<CreateTaskDto, TaskItem>().
-            ForMember(dest => dest.Labels, opt => opt.Ignore());
+        // Domain -> DTO
+        CreateMap<TaskItem, TaskDto>()
+            .ForMember(dest => dest.Labels,
+                opt => opt.MapFrom(src => src.TaskLabels.Select(tl => tl.Label.Name)));
+
+        CreateMap<Label, string>().ConvertUsing(l => l.Name);
+
+        // DTO -> Domain (Create)
+        CreateMap<CreateTaskDto, TaskItem>()
+            .ForMember(dest => dest.TaskLabels, opt => opt.Ignore());
+
+        // DTO -> Domain (Update)
+        CreateMap<UpdateTaskDto, TaskItem>()
+            .ForMember(dest => dest.TaskLabels, opt => opt.Ignore());
 
         //Label
         CreateMap<Label, LabelDto>();
