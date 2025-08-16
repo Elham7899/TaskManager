@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TaskManager.API.DTOs;
 using TaskManager.Application.DTOs.Login;
 using TaskManager.Application.Interfaces;
 

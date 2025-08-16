@@ -1,17 +1,17 @@
-﻿using AutoMapper;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskManager.API.Responses;
+using TaskManager.Application.DTOs.Common;
 using TaskManager.Application.DTOs.Task;
-using TaskManager.Application.Interfaces;
-using TaskManager.Domain.Entities;
+using TaskManager.Application.Tasks.Commands;
+using TaskManager.Application.Tasks.Queries;
 
 namespace TaskManager.API.Controllers;
 
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class TasksController(ITaskService taskService, IMapper mapper) : ControllerBase
+public class TasksController(IMediator mediator) : ControllerBase
 {
     /// <summary>
     /// Gets all tasks with optional title filtering.
@@ -23,11 +23,13 @@ public class TasksController(ITaskService taskService, IMapper mapper) : Control
     [HttpGet]
     [Authorize(Roles = "User")]
     [ProducesResponseType(typeof(ApiResponse<List<TaskDto>>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<ApiResponse<List<TaskDto>>>> GetAll(bool isComplete, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    public async Task<ActionResult<ApiResponse<List<TaskDto>>>> GetAll(
+        bool? isCompleted,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var tasks = await taskService.GetAllTasksAsync(isComplete, page, pageSize);
-        var dtos = mapper.Map<List<TaskDto>>(tasks);
-        return Ok(ApiResponse<List<TaskDto>>.ReturnSuccess(dtos, new PaginationMetadata(page, pageSize, dtos.Count)));
+        var result = await mediator.Send(new GetTasksQuery(page, pageSize));
+        return Ok(ApiResponse<List<TaskDto>>.ReturnSuccess(result.Items, result.GetMetadata()));
     }
 
     /// <summary>
@@ -39,9 +41,10 @@ public class TasksController(ITaskService taskService, IMapper mapper) : Control
     [ProducesResponseType(typeof(ApiResponse<TaskDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<TaskDto>>> Create([FromBody] CreateTaskDto input)
     {
-        var task = mapper.Map<TaskItem>(input);
-        var result = await taskService.AddTaskAsync(task, input.LabelIds);
-        return Ok(ApiResponse<TaskDto>.ReturnSuccess(mapper.Map<TaskDto>(task)));
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var result = await mediator.Send(new CreateTaskCommand(input, userId!));
+
+        return Ok(ApiResponse<TaskDto>.ReturnSuccess(result));
     }
 
     /// <summary>
@@ -51,12 +54,12 @@ public class TasksController(ITaskService taskService, IMapper mapper) : Control
     /// <returns></returns>
     [HttpGet("{id}")]
     [Authorize(Roles = "User")]
-    public async Task<ActionResult<ApiResponse<TaskDto>>> GetTaskById(int id)
+    [ProducesResponseType(typeof(ApiResponse<TaskDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<TaskDto>>> GetById(int id)
     {
-        var task = await taskService.GetTaskByIdAsync(id);
-        if (task == null)
-            return NotFound();
-
-        return Ok(ApiResponse<TaskDto>.ReturnSuccess(mapper.Map<TaskDto>(task)));
+        var task = await mediator.Send(new GetTaskByIdQuery(id));
+        return task is null
+            ? NotFound()
+            : Ok(ApiResponse<TaskDto>.ReturnSuccess(task));
     }
 }

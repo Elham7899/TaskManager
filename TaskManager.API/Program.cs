@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,17 +8,26 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using TaskManager.API.Middlewares;
-using TaskManager.Application.Interfaces;
+using TaskManager.Application.Behaviors;
 using TaskManager.Application.Mapping;
-using TaskManager.Application.Validators.Task;
+using TaskManager.Application.Tasks.Commands;
+using TaskManager.Application.Validators.Tasks;
 using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.DBContext;
-using TaskManager.Infrastructure.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(CreateTaskCommand).Assembly);
+});
+
 // Add services to the container.
+// Register pipeline behaviors in order
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ApiResponseBehavior<,>));
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -54,10 +64,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 // Dependency Injection
-builder.Services.AddScoped<ITaskService, TaskService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ILabelService, LabelService>();
-builder.Services.AddScoped<IRoleService, RoleService>();
+//builder.Services.AddScoped<ITaskService, TaskService>();
+//builder.Services.AddScoped<IAuthService, AuthService>();
+//builder.Services.AddScoped<ILabelService, LabelService>();
+//builder.Services.AddScoped<IRoleService, RoleService>();
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateTaskDtoValidator>();

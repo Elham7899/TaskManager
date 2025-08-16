@@ -1,11 +1,7 @@
-﻿using AutoMapper;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using TaskManager.Application.DTOs.Label;
-using TaskManager.Application.Mapping;
 using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.DBContext;
-using TaskManager.Infrastructure.Services;
 
 namespace TaskManager.Tests.Services;
 

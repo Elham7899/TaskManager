@@ -1,5 +1,4 @@
-﻿using TaskManager.API.DTOs;
-using TaskManager.Application.DTOs.Login;
+﻿using TaskManager.Application.DTOs.Login;
 using TaskManager.Domain.Entities;
 
 namespace TaskManager.Application.Interfaces;
