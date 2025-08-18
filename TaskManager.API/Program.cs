@@ -10,7 +10,7 @@ using System.Text;
 using TaskManager.API.Middlewares;
 using TaskManager.Application.Behaviors;
 using TaskManager.Application.Mapping;
-using TaskManager.Application.Tasks.Commands;
+using TaskManager.Application.Tasks.Commands.Create;
 using TaskManager.Application.Validators.Tasks;
 using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.DBContext;

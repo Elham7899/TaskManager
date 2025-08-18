@@ -2,9 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Infrastructure.DBContext;
 
-namespace TaskManager.Application.Tasks.Commands;
-
-public record DeleteTaskCommand(int Id) : IRequest<Unit>;
+namespace TaskManager.Application.Tasks.Commands.Delete;
 
 public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand, Unit>
 {

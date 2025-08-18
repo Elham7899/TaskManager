@@ -2,8 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Application.DTOs.Task;
 using TaskManager.Application.Mapping;
-using TaskManager.Application.Tasks.Commands;
+using TaskManager.Application.Tasks.Commands.Create;
 using TaskManager.Application.Tasks.Queries;
+using TaskManager.Application.Tasks.Queries.GetAll;
+using TaskManager.Application.Tasks.Queries.GetBy;
 using TaskManager.Infrastructure.DBContext;
 
 namespace TaskManager.Tests.Tasks;
@@ -21,7 +23,7 @@ public class TaskCommandQueryTests
     private ApplicationDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString()) 
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
         return new ApplicationDbContext(options);
