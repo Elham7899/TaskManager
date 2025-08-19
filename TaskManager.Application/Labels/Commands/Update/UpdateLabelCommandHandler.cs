@@ -11,10 +11,13 @@ public class UpdateLabelCommandHandler(ApplicationDbContext dbContext, IMapper m
     public async Task<LabelDto> Handle(UpdateLabelCommand request, CancellationToken cancellationToken)
     {
         var label = await dbContext.Labels.FirstOrDefaultAsync(x => x.Id == request.labelId, cancellationToken);
+       
         if (label == null)
             throw new KeyNotFoundException("Label not found");
 
         label.Name = request.name;
+        label.UpdatedBy = request.userName;
+        label.UpdatedAt = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync(cancellationToken);
         return mapper.Map<LabelDto>(label);

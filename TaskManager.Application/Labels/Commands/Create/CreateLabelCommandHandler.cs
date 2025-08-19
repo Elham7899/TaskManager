@@ -12,6 +12,7 @@ public class CreateLabelCommandHandler(ApplicationDbContext dbContext, IMapper m
     {
         var entity = mapper.Map<Label>(request.Input);
         entity.CreatedBy = request.UserId;
+        entity.UpdatedBy = request.UserId;
 
         dbContext.Labels.Add(entity);
         await dbContext.SaveChangesAsync(cancellationToken);

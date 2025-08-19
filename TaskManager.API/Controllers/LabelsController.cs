@@ -79,7 +79,7 @@ public class LabelsController(IMediator mediator, IMapper mapper) : ControllerBa
     [HttpDelete("{labelId}")]
     public async Task<ActionResult<ApiResponse<string>>> DeleteLabel(int labelId)
     {
-        await mediator.Send(new DeleteLabelCommand(labelId));
+        await mediator.Send(new DeleteLabelCommand(labelId, User.Identity!.Name!));
         return Ok(ApiResponse<string>.ReturnSuccess("Label deleted successfully."));
     }
 }

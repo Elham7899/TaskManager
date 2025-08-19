@@ -34,6 +34,8 @@ public class AssignLabelsToTaskCommandHandler(ApplicationDbContext dbContext) : 
                     Label = label
                 });
             }
+            label.UpdatedBy = task.UpdatedBy;
+            label.CreatedBy = task.CreatedBy;
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);

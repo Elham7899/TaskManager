@@ -12,6 +12,8 @@ public class DeleteLabelCommandHandler(ApplicationDbContext dbContext) : IReques
         if (label != null)
         {
             dbContext.Labels.Remove(label);
+            label.CreatedBy = request.userName; 
+            label.UpdatedAt = DateTime.UtcNow;
             await dbContext.SaveChangesAsync();
         }
         else throw new KeyNotFoundException("Label not found");
