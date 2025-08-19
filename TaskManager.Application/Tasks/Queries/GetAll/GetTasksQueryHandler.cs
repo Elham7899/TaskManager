@@ -6,9 +6,7 @@ using TaskManager.Application.DTOs.Common;
 using TaskManager.Application.DTOs.Task;
 using TaskManager.Infrastructure.DBContext;
 
-namespace TaskManager.Application.Tasks.Queries;
-
-public record GetTasksQuery(int Page = 1, int PageSize = 20, string? Search = null, bool? IsCompleted = null, int? LabelId = null) : IRequest<PagedResult<TaskDto>>;
+namespace TaskManager.Application.Tasks.Queries.GetAll;
 
 public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagedResult<TaskDto>>
 {

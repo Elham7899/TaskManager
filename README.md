@@ -17,12 +17,30 @@
 - Centralized exception middleware
 
 ### 📦 Domain-Centric Architecture
+<<<<<<< HEAD
 | Layer          | Responsibilities                             |
 |----------------|----------------------------------------------|
 | **Domain**     | Entities, Enums                              |
 | **Application**|Services, DTOs, Validators, Mapping ,Interface|
 | **Infrastructure**| EF Core, PostgreSQL, Identity, Caching    |
 | **API**        | Controllers, Middleware, Swagger config, Auth|
+=======
+This project now follows a clean, scalable **CQRS + MediatR pattern**:
+| Layer          | Responsibilities                          |
+|----------------|-------------------------------------------|
+| **Domain**     | Entities, Enums, Exceptions   |
+| **Application**| CQRS Handlers, DTOs, Validators, Mapping, Error & Validation Behaviors |
+| **Infrastructure**| EF Core, (PostgreSQL/InMemory), Identity, Caching ,Persistence  |
+| **API**        | Controllers, Middleware, Swagger config , Auth, Centralized Error Handling  |
+
+
+##  Key Features
+- Full **CQRS implementation** for Task and Label workflows  
+- **FluentValidation** and **pipeline behaviors** for validation & consistent error responses  
+- **Pagination** support via `PagedResult<T>` + `PaginationMetadata`  
+- **API Response wrapper** (`ApiResponse<T>`) for success/error consistency  
+- **Unit tests** covering each handler directly — no service layer dependencies
+>>>>>>> Dev
 
 ### ⚙️ Operational Excellence
 - ✅ **Global Error Handling** via `ExceptionMiddleware`
@@ -47,12 +65,10 @@ GET /api/tasks?isComplete=false&page=1&pageSize=10
 Authorization: Bearer <token>
 
 ## 🧪 Testing Strategy
-graph TD
-    A[Unit Tests] --> B[Domain Layer]
-    A --> C[Application Layer]
-    D[Integration Tests] --> E[API Endpoints]
-    D --> F[Database Interactions]
-    G[Postman] --> H[E2E Workflow Validation]
+Each CQRS handler (Create, Update, Delete, Assign, Remove, Query) has dedicated unit tests using:
+- `InMemoryDatabase` for isolation  
+- `FluentAssertions` for expressive verification  
+- Clean setups faking `CreatedBy`/`UpdatedBy` and relationships using `TaskLabel`
     
 Run tests with:
     dotnet test
@@ -78,6 +94,8 @@ Integrate Azure Key Vault for secrets
 Add OpenTelemetry instrumentation
 Develop React frontend (separate repo)
 Implement CI/CD pipeline (GitHub Actions)
+Analytics + Swagger improvements  
+React frontend integration 
 
 ## 🤝 Contribution Guidelines
 Create feature branches from develop branch
