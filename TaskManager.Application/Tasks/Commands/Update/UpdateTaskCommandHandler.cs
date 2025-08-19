@@ -5,9 +5,7 @@ using TaskManager.Application.DTOs.Task;
 using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.DBContext;
 
-namespace TaskManager.Application.Tasks.Commands;
-
-public record UpdateTaskCommand(UpdateTaskDto Dto, string CurrentUserId) : IRequest<TaskDto>;
+namespace TaskManager.Application.Tasks.Commands.Update;
 
 public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskDto>
 {
@@ -35,8 +33,8 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskD
         entity.UpdatedBy = request.CurrentUserId;
 
         // Sync labels if provided
-        if ((request.Dto.LabelIds != null && request.Dto.LabelIds.Any()) ||
-            (request.Dto.LabelNames != null && request.Dto.LabelNames.Any()))
+        if (request.Dto.LabelIds != null && request.Dto.LabelIds.Any() ||
+            request.Dto.LabelNames != null && request.Dto.LabelNames.Any())
         {
             var desiredLabelIds = new HashSet<int>();
 

@@ -5,10 +5,7 @@ using TaskManager.Application.DTOs.Task;
 using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.DBContext;
 
-namespace TaskManager.Application.Tasks.Commands;
-
-// Command
-public record   CreateTaskCommand(CreateTaskDto Dto, string CurrentUserId) : IRequest<TaskDto>;
+namespace TaskManager.Application.Tasks.Commands.Create;
 
 // Handler
 public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskDto>

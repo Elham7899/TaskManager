@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskManager.Application.DTOs.Task;
 using TaskManager.Infrastructure.DBContext;
 
-namespace TaskManager.Application.Tasks.Queries;
-
-public record GetTaskByIdQuery(int Id) : IRequest<TaskDto?>;
+namespace TaskManager.Application.Tasks.Queries.GetBy;
 
 public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, TaskDto?>
 {
