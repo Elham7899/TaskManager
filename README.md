@@ -7,9 +7,6 @@
 
 > Production-ready task management API with enterprise security, containerization, and clean architecture implementation
 
-![Architecture Diagram](https://via.placeholder.com/800x400.png?text=Clean+Architecture+Diagram)
-*(Pro Tip: Add architecture diagram with [draw.io](https://app.diagrams.net/))*
-
 ## 🌟 Core Features
 
 ### 🔒 Security & Authentication
