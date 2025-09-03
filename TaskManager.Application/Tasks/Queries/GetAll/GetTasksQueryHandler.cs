@@ -8,14 +8,18 @@ using TaskManager.Infrastructure.DBContext;
 
 namespace TaskManager.Application.Tasks.Queries.GetAll;
 
-public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagedResult<TaskDto>>
+public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, ApiResponse<PagedResult<TaskDto>>>
 {
     private readonly ApplicationDbContext _db;
     private readonly IMapper _mapper;
-    public GetTasksQueryHandler(ApplicationDbContext db, IMapper mapper)
-    { _db = db; _mapper = mapper; }
 
-    public async Task<PagedResult<TaskDto>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
+    public GetTasksQueryHandler(ApplicationDbContext db, IMapper mapper)
+    {
+        _db = db;
+        _mapper = mapper;
+    }
+
+    public async Task<ApiResponse<PagedResult<TaskDto>>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
     {
         var query = _db.Tasks.AsQueryable();
 
@@ -38,6 +42,8 @@ public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagedResult<T
             .ProjectTo<TaskDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<TaskDto>(items, total, request.Page, request.PageSize);
+        var result = new PagedResult<TaskDto>(items, total, request.Page, request.PageSize);
+
+        return ApiResponse<PagedResult<TaskDto>>.ReturnSuccess(result);
     }
 }

@@ -99,7 +99,20 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddAutoMapper(x => x.AddProfile<MappingProfile>());
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy
+            .WithOrigins("http://localhost:5174") 
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+    );
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
+
 
 using (var scope = app.Services.CreateScope())
 {

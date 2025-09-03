@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace TaskManager.Application.Behaviors;
 
 public class ApiResponseBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, ApiResponse<TResponse>>
+    where TRequest : IRequest<ApiResponse<TResponse>>
 {
     private readonly ILogger<ApiResponseBehavior<TRequest, TResponse>> _logger;
 
@@ -39,3 +40,4 @@ public class ApiResponseBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         }
     }
 }
+
