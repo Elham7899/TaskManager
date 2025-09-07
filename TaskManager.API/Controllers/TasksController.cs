@@ -38,7 +38,7 @@ public class TasksController(IMediator mediator) : ControllerBase
     /// </summary>
     /// <returns>List of tasks</returns>
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(ApiResponse<TaskDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<TaskDto>>> Create([FromBody] CreateTaskDto input)
     {
