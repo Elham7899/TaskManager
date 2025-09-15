@@ -9,11 +9,11 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using TaskManager.API.Middlewares;
 using TaskManager.Application.Behaviors;
+using TaskManager.Application.Features.Tasks.Commands.Create;
 using TaskManager.Application.Mapping;
-using TaskManager.Application.Tasks.Commands.Create;
 using TaskManager.Application.Validators.Tasks;
 using TaskManager.Domain.Entities;
-using TaskManager.Infrastructure.DBContext;
+using TaskManager.Infrastructure.Persistence;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -99,7 +99,20 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddAutoMapper(x => x.AddProfile<MappingProfile>());
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy
+            .WithOrigins("http://localhost:5173") 
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+    );
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
+
 
 using (var scope = app.Services.CreateScope())
 {

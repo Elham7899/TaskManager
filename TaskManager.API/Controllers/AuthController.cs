@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using TaskManager.Application.DTOs.Login;
-using TaskManager.Application.Interfaces;
+using TaskManager.Application.Features.Auth.Commands.AssignRole;
+using TaskManager.Application.Features.Auth.Commands.Login;
+using TaskManager.Application.Features.Auth.Commands.Register;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IAuthService authService, IRoleService roleService) : ControllerBase
+public class AuthController(IMediator mediator) : ControllerBase
 {
     /// <summary>
     /// Login an existing user
@@ -14,7 +17,7 @@ public class AuthController(IAuthService authService, IRoleService roleService) 
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        var token = await authService.LoginAsync(dto);
+        var token = await mediator.Send(new LoginCommand(dto));
         return Ok(new { token });
     }
 
@@ -26,7 +29,7 @@ public class AuthController(IAuthService authService, IRoleService roleService) 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
-        var token = await authService.RegisterAsync(dto);
+        var token = await mediator.Send(new RegisterCommand(dto));
         return Ok(new { token });
     }
 
@@ -35,7 +38,7 @@ public class AuthController(IAuthService authService, IRoleService roleService) 
     {
         try
         {
-            var result = await roleService.AssignRoleToUserAsync(request.UserId, request.Role);
+            var result = await mediator.Send(new AssignRoleCommand(request));
             if (result)
                 return Ok(new { message = "Role assigned successfully" });
 

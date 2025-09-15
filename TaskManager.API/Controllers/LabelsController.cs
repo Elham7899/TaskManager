@@ -4,12 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.Application.DTOs.Common;
 using TaskManager.Application.DTOs.Label;
-using TaskManager.Application.Labels.Commands.Assign;
-using TaskManager.Application.Labels.Commands.Create;
-using TaskManager.Application.Labels.Commands.Delete;
-using TaskManager.Application.Labels.Commands.Remove;
-using TaskManager.Application.Labels.Commands.Update;
-using TaskManager.Application.Labels.Queries.GetAll;
+using TaskManager.Application.Features.Labels.Commands.Create;
+using TaskManager.Application.Features.Labels.Commands.Delete;
+using TaskManager.Application.Features.Labels.Commands.Update;
+using TaskManager.Application.Features.Labels.Queries.GetAll;
 
 namespace TaskManager.API.Controllers;
 

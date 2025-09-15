@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.Application.DTOs.Common;
 using TaskManager.Application.DTOs.Task;
-using TaskManager.Application.Tasks.Commands.Create;
-using TaskManager.Application.Tasks.Queries;
-using TaskManager.Application.Tasks.Queries.GetBy;
+using TaskManager.Application.Features.Tasks.Commands.Create;
+using TaskManager.Application.Features.Tasks.Queries.GetAll;
+using TaskManager.Application.Features.Tasks.Queries.GetBy;
 
 namespace TaskManager.API.Controllers;
 
 [ApiController]
-[Authorize]
+//[Authorize]
 [Route("api/[controller]")]
 public class TasksController(IMediator mediator) : ControllerBase
 {
@@ -22,15 +22,15 @@ public class TasksController(IMediator mediator) : ControllerBase
     /// <param name="pageSize">Page size</param>
     /// <returns>List of tasks</returns>
     [HttpGet]
-    [Authorize(Roles = "User")]
+    //[Authorize(Roles = "User")]
     [ProducesResponseType(typeof(ApiResponse<List<TaskDto>>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<List<TaskDto>>>> GetAll(
         bool? isCompleted,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
-        var result = await mediator.Send(new GetTasksQuery(page, pageSize));
-        return Ok(ApiResponse<List<TaskDto>>.ReturnSuccess(result.Items, result.GetMetadata()));
+        var result = await mediator.Send(new GetTasksQuery(page, pageSize, null, isCompleted));
+        return Ok(result);
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class TasksController(IMediator mediator) : ControllerBase
     /// </summary>
     /// <returns>List of tasks</returns>
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(ApiResponse<TaskDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<TaskDto>>> Create([FromBody] CreateTaskDto input)
     {
