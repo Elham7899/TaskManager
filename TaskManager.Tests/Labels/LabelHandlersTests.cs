@@ -1,16 +1,14 @@
 ﻿using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using TaskManager.Application.Labels.Commands.Assign;
-using TaskManager.Application.Labels.Commands.Create;
-using TaskManager.Application.Labels.Commands.Delete;
-using TaskManager.Application.Labels.Commands.Remove;
-using TaskManager.Application.Labels.Commands.Update;
-using TaskManager.Application.Labels.Queries.GetAll;
-using TaskManager.Application.Labels.Queries.GetBy;
+using TaskManager.Application.Features.Labels.Commands.Create;
+using TaskManager.Application.Features.Labels.Commands.Delete;
+using TaskManager.Application.Features.Labels.Commands.Update;
+using TaskManager.Application.Features.Labels.Queries.GetAll;
+using TaskManager.Application.Features.Labels.Queries.GetBy;
 using TaskManager.Application.Mapping;
 using TaskManager.Domain.Entities;
-using TaskManager.Infrastructure.DBContext;
+using TaskManager.Infrastructure.Persistence;
 
 namespace TaskManager.Tests.Labels;
 

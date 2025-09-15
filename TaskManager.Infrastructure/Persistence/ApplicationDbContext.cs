@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.EntityConfigurations;
 
-namespace TaskManager.Infrastructure.DBContext;
+namespace TaskManager.Infrastructure.Persistence;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {

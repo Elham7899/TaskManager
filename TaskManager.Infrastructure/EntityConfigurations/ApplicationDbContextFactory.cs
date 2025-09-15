@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using TaskManager.Infrastructure.DBContext;
+using TaskManager.Infrastructure.Persistence;
 
 namespace TaskManager.Infrastructure.EntityConfigurations;
 

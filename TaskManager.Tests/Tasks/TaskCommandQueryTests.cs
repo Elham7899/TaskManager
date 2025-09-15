@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Application.DTOs.Task;
+using TaskManager.Application.Features.Tasks.Commands.Create;
+using TaskManager.Application.Features.Tasks.Queries.GetAll;
+using TaskManager.Application.Features.Tasks.Queries.GetBy;
 using TaskManager.Application.Mapping;
-using TaskManager.Application.Tasks.Commands.Create;
-using TaskManager.Application.Tasks.Queries;
-using TaskManager.Application.Tasks.Queries.GetAll;
-using TaskManager.Application.Tasks.Queries.GetBy;
-using TaskManager.Infrastructure.DBContext;
+using TaskManager.Infrastructure.Persistence;
 
 namespace TaskManager.Tests.Tasks;
 

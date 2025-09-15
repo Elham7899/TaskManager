@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.Application.DTOs.Common;
 using TaskManager.Application.DTOs.Task;
-using TaskManager.Application.Tasks.Commands.Create;
-using TaskManager.Application.Tasks.Queries;
-using TaskManager.Application.Tasks.Queries.GetBy;
+using TaskManager.Application.Features.Tasks.Commands.Create;
+using TaskManager.Application.Features.Tasks.Queries.GetAll;
+using TaskManager.Application.Features.Tasks.Queries.GetBy;
 
 namespace TaskManager.API.Controllers;
 

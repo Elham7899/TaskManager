@@ -9,11 +9,11 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using TaskManager.API.Middlewares;
 using TaskManager.Application.Behaviors;
+using TaskManager.Application.Features.Tasks.Commands.Create;
 using TaskManager.Application.Mapping;
-using TaskManager.Application.Tasks.Commands.Create;
 using TaskManager.Application.Validators.Tasks;
 using TaskManager.Domain.Entities;
-using TaskManager.Infrastructure.DBContext;
+using TaskManager.Infrastructure.Persistence;
 
 
 var builder = WebApplication.CreateBuilder(args);
