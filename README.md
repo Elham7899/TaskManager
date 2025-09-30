@@ -8,55 +8,57 @@
 > Production-ready task management API with enterprise security, containerization, and clean architecture implementation
 
 ## 🌟 Core Features
+## 🔒 Security & Authentication
 
-### 🔒 Security & Authentication
-- JWT Bearer Authentication with refresh tokens
-- Role-based Authorization (RBAC)
-- Password hashing with PBKDF2
-- Token revocation mechanism
+JWT Bearer Authentication with refresh tokens
+Role-based Authorization (RBAC)
+Secure password hashing with PBKDF2
+Token revocation mechanism
 
-### 📦 Domain-Centric Architecture
-This project now follows a clean, scalable **CQRS + MediatR pattern**:
-| Layer          | Responsibilities                          |
-|----------------|-------------------------------------------|
-| **Domain**     | Entities, Enums, Exceptions   |
-| **Application**| CQRS Handlers, DTOs, Validators, Mapping, Error & Validation Behaviors |
-| **Infrastructure**| EF Core, (PostgreSQL/InMemory), Identity, Caching ,Persistence  |
-| **API**        | Controllers, Middleware, Swagger config , Auth, Centralized Error Handling  |
+## 📦 Domain-Centric Architecture (CQRS + MediatR)
+| Layer              | Responsibilities                                                   |
+| ------------------ | ------------------------------------------------------------------ |
+| **Domain**         | Entities, Enums, Exceptions                                        |
+| **Application**    | CQRS Handlers, DTOs, Validators, Mapping, Pipeline Behaviors       |
+| **Infrastructure** | EF Core (PostgreSQL/InMemory), Identity, Persistence, Caching      |
+| **API**            | Controllers, Middleware, Swagger, Auth, Centralized Error Handling |
 
+✅ CQRS for tasks and labels
+✅ FluentValidation + pipeline behaviors for validation & error handling
+✅ Pagination support via PagedResult<T> & PaginationMetadata
+✅ Consistent API responses via ApiResponse<T>
+✅ Unit tests for handlers (no service layer dependencies)
 
-##  Key Features
-- Full **CQRS implementation** for Task and Label workflows  
-- **FluentValidation** and **pipeline behaviors** for validation & consistent error responses  
-- **Pagination** support via `PagedResult<T>` + `PaginationMetadata`  
-- **API Response wrapper** (`ApiResponse<T>`) for success/error consistency  
-- **Unit tests** covering each handler directly — no service layer dependencies
+## ⚙️ Operational Excellence
 
-### ⚙️ Operational Excellence
-- Dockerized PostgreSQL with persistent volume
-- Health Check endpoints (`/health`)
-- Request/Response logging with Serilog
-- Automated database migrations on startup
-- Swagger UI with JWT support
+Dockerized PostgreSQL with persistent volumes
+Automated EF Core migrations on startup
+Health check endpoints (/health)
+Request/Response logging via Serilog
+Swagger UI with JWT authentication support
 
 ## 📚 API Endpoints
-Method	Endpoint	Description	Auth Required
-POST	/api/auth/login	Get JWT token	❌
-POST	/api/tasks	Create new task	✅
-GET	/api/tasks?status=InProgress	Filter tasks	✅
-PUT	/api/tasks/{id}	Update task	✅
+| Method | Endpoint                       | Description     | Auth Required |
+| ------ | ------------------------------ | --------------- | ------------- |
+| POST   | `/api/auth/login`              | Get JWT token   | ❌             |
+| POST   | `/api/tasks`                   | Create new task | ✅             |
+| GET    | `/api/tasks?status=InProgress` | Filter tasks    | ✅             |
+| PUT    | `/api/tasks/{id}`              | Update task     | ✅             |
+
+
 
 ## 🧪 Testing Strategy
-Each CQRS handler (Create, Update, Delete, Assign, Remove, Query) has dedicated unit tests using:
-- `InMemoryDatabase` for isolation  
-- `FluentAssertions` for expressive verification  
-- Clean setups faking `CreatedBy`/`UpdatedBy` and relationships using `TaskLabel`
-    
+
+All CQRS handlers (Create, Update, Delete, Assign, Remove, Query) are covered with unit tests using:
+InMemoryDatabase for isolation
+FluentAssertions for readable assertions
+Proper setups for CreatedBy / UpdatedBy and relationships (TaskLabel)
 Run tests with:
-    dotnet test
+dotnet test
 
 ## 🔧 Environment Configuration
-Configure via appsettings.Development.json:
+
+appsettings.Development.json:
 {
   "Jwt": {
     "Secret": "your-256-bit-secret",
@@ -68,46 +70,46 @@ Configure via appsettings.Development.json:
 }
 
 ## 🛠 Future Roadmap
-Add Redis caching layer
-Implement SignalR real-time updates
-Integrate Azure Key Vault for secrets
-Add OpenTelemetry instrumentation
-Develop React frontend (separate repo)
-Implement CI/CD pipeline (GitHub Actions)
-Analytics + Swagger improvements  
-React frontend integration 
+ Add Redis caching layer
+ Real-time updates with SignalR
+ Secure secrets via Azure Key Vault
+ Distributed tracing with OpenTelemetry
+ CI/CD pipeline (GitHub Actions)
+ Analytics + Swagger improvements
+ Full React frontend integration (separate repo)
 
 ## 🤝 Contribution Guidelines
-Create feature branches from develop branch
+Create feature branches from develop
 Follow CQRS pattern for new features
 Maintain 80%+ test coverage
-Document API changes in Swagger
+Document all API changes in Swagger
 Update docker-compose for new services
 
 # Example workflow:
 git checkout -b feature/auth-enhancements
 # Make changes
-dotnet format # Enforce code style
-dotnet test   # Verify tests
+dotnet format      # Enforce code style
+dotnet test        # Run unit tests
 git push origin feature/auth-enhancements
 
 ## 📜 License
-MIT License - See LICENSE for details
+MIT License — see LICENSE
+ for details.
 
 ## 🚀 Getting Started
-
 ### Prerequisites
-- .NET 8 SDK
-- Docker Desktop
-- PostgreSQL 16
+.NET 8 SDK
+Docker Desktop
+PostgreSQL 16
+Local Development
 
 ### Local Development
-```bash
 # Clone repository
 git clone https://github.com/Elham7899/TaskManager.git
 
-# Start database container
+# Start PostgreSQL container
 docker compose up -d postgres
 
-# Run application
+# Run the API
 dotnet run --project src/API
+
