@@ -9,7 +9,7 @@ namespace TaskManager.Application.Features.Auth.Commands.Register;
 public class RegisterCommandHandler(UserManager<ApplicationUser> userManager, IMediator mediator) : IRequestHandler<RegisterCommand, string>
 {
     public async Task<string> Handle(RegisterCommand request, CancellationToken cancellationToken)
-    {
+     {
         var user = new ApplicationUser
         {
             UserName = request.UserName,

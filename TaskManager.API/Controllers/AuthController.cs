@@ -1,13 +1,16 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.Application.DTOs.Login;
 using TaskManager.Application.Features.Auth.Commands.AssignRole;
 using TaskManager.Application.Features.Auth.Commands.Login;
 using TaskManager.Application.Features.Auth.Commands.Register;
+using TaskManager.Domain.Entities;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IMediator mediator) : ControllerBase
+public class AuthController(IMediator mediator, UserManager<ApplicationUser> userManager) : ControllerBase
 {
     /// <summary>
     /// Login an existing user
@@ -18,7 +21,8 @@ public class AuthController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
         var token = await mediator.Send(new LoginCommand(dto));
-        return Ok(new { token });
+        var user = await userManager.FindByNameAsync(dto.UserName);
+        return Ok(new { token, userId = user.Id });
     }
 
     /// <summary>
@@ -30,7 +34,9 @@ public class AuthController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
         var token = await mediator.Send(new RegisterCommand(dto));
-        return Ok(new { token });
+        var user = await userManager.FindByNameAsync(dto.UserName);
+
+        return Ok(new { token, userId = user.Id });
     }
 
     [HttpPost("assign")]
@@ -49,4 +55,16 @@ public class AuthController(IMediator mediator) : ControllerBase
             return StatusCode(500, new { error = ex.Message });
         }
     }
+
+    [HttpGet("users")]
+    [Authorize(Roles = "Admin,User")]
+    public async Task<IActionResult> GetUsers()
+    {
+        var users = userManager.Users
+            .Select(u => new { u.Id, u.UserName, u.Email })
+            .ToList();
+
+        return Ok(users);
+    }
+
 }

@@ -38,7 +38,7 @@ public class TasksController(IMediator mediator) : ControllerBase
     /// </summary>
     /// <returns>List of tasks</returns>
     [HttpPost]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,User")]
     [ProducesResponseType(typeof(ApiResponse<TaskDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<TaskDto>>> Create([FromBody] CreateTaskDto input)
     {
@@ -54,13 +54,13 @@ public class TasksController(IMediator mediator) : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "Admin,User")]
     [ProducesResponseType(typeof(ApiResponse<TaskDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<TaskDto>>> GetById(int id)
     {
         var task = await mediator.Send(new GetTaskByIdQuery(id));
         return task is null
             ? NotFound()
-            : Ok(ApiResponse<TaskDto>.ReturnSuccess(task));
+            : Ok(task);
     }
 }
